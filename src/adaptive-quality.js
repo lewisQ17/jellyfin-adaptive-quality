@@ -29,7 +29,7 @@
  *
  * Fails safe: on any error it applies no restriction at all, i.e. current behaviour.
  *
- * License: MIT
+ * License: MIT-0 (MIT No Attribution) — use freely, no credit required.
  */
 (function () {
   'use strict';
