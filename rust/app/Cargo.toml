@@ -10,6 +10,7 @@ name = "jelly-scripts"
 path = "src/main.rs"
 
 [dependencies]
+rustix = { version = "1", features = ["fs"] }
 rusqlite = { version = "0.37", features = ["bundled"] }
 sha2 = "0.10"
 ureq = { version = "3", default-features = false }

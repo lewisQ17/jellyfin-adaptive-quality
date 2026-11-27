@@ -27,3 +27,9 @@ Consequences: dit zijn kandidaat-bugs om later bewust te herzien (nieuw ADR).
 ## ADR-005: Niets deployen
 Status: accepted (2026-11-27)
 Decision: geen installatie op de Jellyfin-host, geen cron/systemd-wijziging, geen `rust-anything enable/setup`.
+
+## ADR-006: `cache-fix` verwijdert fd-relatief en volgt nooit symlinks (bewust veiliger dan het origineel)
+Status: accepted (2026-11-27) - beveiligingsfix, opdracht Lewis
+Context: de eerste Rust-port volgde symlinks (`fs::metadata`, `remove_file(path)`), en draait als root: een symlink of een tussentijds verwisselde map-component (TOCTOU) kon bestanden buiten de cache laten verwijderen.
+Decision: `cache_fix.rs` (module `safefs`, crate `rustix`) werkt zoals `find -delete`: de rootmap wordt geopend met `O_NOFOLLOW|O_DIRECTORY`, elke submap met `openat(..., O_NOFOLLOW|O_DIRECTORY)` relatief aan de ouder-fd, types via `fstatat(AT_SYMLINK_NOFOLLOW)`, verwijderen met `unlinkat` relatief aan een open map-fd (bestand: enkel als het nog een gewoon bestand is; lege map: `AT_REMOVEDIR`). Symlinks (bestanden en mappen) worden overgeslagen, tellen niet als bestand en maken een map "niet leeg". Een symlink als rootmap wordt niet gevolgd. Enige uitzondering: het verwijderen van de rootmap zelf (alleen als helemaal leeg) gebruikt `rmdir(pad)`, dat nooit een symlink volgt.
+Consequences: gedrag voor gewone mappen gelijk (22/22 replay, snapshot-tests ongewijzigd); mtime komt uit `fstatat` i.p.v. `metadata`. Tests met symlinks naar een map en bestand buiten de cache (blijven intact).
