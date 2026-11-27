@@ -1,0 +1,9 @@
+bin.name = "orig"
+args = ["cache-fix", "-h"]
+env.add.HOME = "/tmp/jf-home"
+env.add.JELLY_DB = "./jellyfin.db"
+env.add.PATH = "/Users/lewisquintens/Wall-LE/code/jellyfin-adaptive-quality/.claude/worktrees/rust-port/rust/tools/shims:/usr/bin:/bin:/usr/local/bin"
+env.add.PLAYBACK_DB = "./playback.db"
+env.add.STATE_FILE = "./state.hash"
+status.code = 0
+fs.sandbox = true

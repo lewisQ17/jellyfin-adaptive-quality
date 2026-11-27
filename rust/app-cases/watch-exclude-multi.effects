@@ -1,0 +1,14 @@
+http POST http://sink/
+content-type: application/x-www-form-urlencoded
+
+Jellyfin activity (15m window)
+Active users: 3 | Transcodes: 0
+
+- unknown -> Zonder Gebruiker [Movie] (DIRECT; DirectPlay; Kodi/Shield)
+- 99999999 -> unknown [unknown] (DIRECT; ; unknown/unknown)
+- admin -> Admin Test [Movie] (DIRECT; DirectPlay; Jellyfin Web/Chrome)
+
+Host load: n/a
+Host mem: n/a
+Config fs: 20G/50G (42%)
+Transcode fs: 10G/100G (11%)

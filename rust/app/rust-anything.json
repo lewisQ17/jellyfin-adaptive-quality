@@ -1,0 +1,9 @@
+{
+  "schema": "rust-anything/front-door@1",
+  "name": "orig",
+  "commands": [
+    "cache-fix",
+    "watch-notify"
+  ],
+  "units": []
+}

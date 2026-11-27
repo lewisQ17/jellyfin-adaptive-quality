@@ -1,0 +1,11 @@
+#!/bin/sh
+# Test-shim voor `df -h <pad>`: geeft vaste (fictieve) Linux-achtige uitvoer zodat de scripts op macOS kunnen draaien.
+last=""
+for a in "$@"; do last="$a"; done
+echo "Filesystem      Size  Used Avail Use% Mounted on"
+case "$last" in
+  /srv/jellyfin) echo "/dev/sda1        50G   20G   28G  42% /srv/jellyfin" ;;
+  /mnt/jellyfin-transcodes) echo "/dev/sdb1       100G   10G   85G  11% /mnt/jellyfin-transcodes" ;;
+  /) echo "/dev/sda1        50G   20G   28G  42% /" ;;
+  *) echo "/dev/sda1        50G   20G   28G  42% $last" ;;
+esac

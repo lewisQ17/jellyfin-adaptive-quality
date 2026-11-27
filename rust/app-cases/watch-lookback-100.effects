@@ -1,0 +1,17 @@
+http POST http://sink/
+content-type: application/x-www-form-urlencoded
+
+Jellyfin activity (100m window)
+Active users: 6 | Transcodes: 3
+
+- Bob -> Veel Te Oud [Movie] (DIRECT; DirectPlay; X/Y)
+- carol -> Te Oud [Movie] (TRANSCODE; Transcode; X/Y)
+- unknown -> Zonder Gebruiker [Movie] (DIRECT; DirectPlay; Kodi/Shield)
+- 99999999 -> unknown [unknown] (DIRECT; ; unknown/unknown)
+- admin -> Admin Test [Movie] (DIRECT; DirectPlay; Jellyfin Web/Chrome)
+- alice -> Tweede Film [Movie] (TRANSCODE; Transcode; Jellyfin Web/Firefox)
+
+Host load: n/a
+Host mem: n/a
+Config fs: 20G/50G (42%)
+Transcode fs: 10G/100G (11%)

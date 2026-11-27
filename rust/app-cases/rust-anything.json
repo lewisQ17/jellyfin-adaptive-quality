@@ -1,0 +1,43 @@
+{
+  "schema": "rust-anything/app-cases@1",
+  "name": "orig",
+  "run": [
+    "bash",
+    "rust/tools/orig.sh"
+  ],
+  "normalizers": {
+    "scriptpath": "/[^ :]*/jellyfin-watch-notify\\.sh"
+  },
+  "timeout_secs": 60,
+  "effects": {
+    "http": true,
+    "env": {
+      "NTFY_TOPIC": "http-url"
+    },
+    "db_reset": "python3 rust/tools/seed_db.py"
+  },
+  "recorded": [
+    "watch-default",
+    "watch-no-exclude",
+    "watch-exclude-multi",
+    "watch-lookback-2",
+    "watch-lookback-100",
+    "watch-no-active",
+    "watch-different-state",
+    "watch-missing-db",
+    "watch-missing-jelly-db",
+    "watch-empty-topic",
+    "watch-state-in-subdir",
+    "watch-bad-lookback",
+    "cache-help",
+    "cache-help-short",
+    "cache-bogus",
+    "cache-nonroot",
+    "cache-nonroot-dry",
+    "cache-nonroot-opts",
+    "cache-missing-value",
+    "cache-help-after-dry",
+    "watch-same-state",
+    "watch-same-state-newline"
+  ]
+}

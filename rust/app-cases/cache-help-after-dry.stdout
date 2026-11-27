@@ -1,0 +1,8 @@
+Gebruik:
+  cache-fix.sh [--dry-run] [--keep-log-days N] [--keep-transcode-count N]
+
+Wat doet dit script:
+  - Houdt enkel de N nieuwste transcode-bestanden bij (standaard 2)
+  - Verwijdert oude Jellyfin logs
+  - Verwijdert tijdelijke cache-bestanden
+  - Toont ruimtewinst

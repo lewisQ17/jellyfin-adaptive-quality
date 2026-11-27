@@ -1,0 +1,13 @@
+target/
+node_modules/
+.venv/
+*.node
+*.so
+*.dylib
+*.pyd
+*.pyc
+__pycache__/
+pkg/
+dist/
+*.rlib
+*.db
