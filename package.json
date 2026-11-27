@@ -1,0 +1,11 @@
+{
+  "name": "jellyfin-adaptive-quality",
+  "version": "1.0.0",
+  "description": "Adaptive playback quality for Jellyfin Web: measures what really happens and repairs the failing axis.",
+  "license": "MIT-0",
+  "private": false,
+  "scripts": {
+    "test": "node test/test-adaptive-quality.js && node test/test-quality-panel.js && AQ_LANG=nl node test/test-quality-panel.js"
+  },
+  "engines": { "node": ">=18" }
+}

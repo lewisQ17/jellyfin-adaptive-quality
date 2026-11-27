@@ -80,11 +80,33 @@ A malformed request body is passed through untouched.
 
 FILES
 -----
-    adaptive-quality.js        the mechanism (self-contained, no dependencies)
-    quality-panel.js           optional admin view: who is transcoding, why, from what to what
-    test-adaptive-quality.js   22 tests, run with: node test-adaptive-quality.js
-    test-quality-panel.js      10 tests, run with: node test-quality-panel.js
-    LICENSE                    MIT-0 - use freely, no credit required
+    src/adaptive-quality.js        the mechanism (self-contained, no dependencies)
+    src/quality-panel.js           optional admin view: who is transcoding, why, from what to what
+    test/test-adaptive-quality.js  tests for the mechanism
+    test/test-quality-panel.js     smoke test for the admin panel (English and Dutch)
+    LICENSE                        MIT-0 - use freely, no credit required
 
-Install: paste adaptive-quality.js into any mechanism that injects a script into
-jellyfin-web (e.g. the JavaScript Injector plugin) and enable it.
+INSTALL (JavaScript Injector plugin)
+------------------------------------
+1. In Jellyfin: Dashboard -> Plugins -> install "JavaScript Injector" (and restart).
+2. Open the plugin settings and add a new script. Paste the content of
+   src/adaptive-quality.js and enable it. Optionally add src/quality-panel.js as a
+   second script (adds an admin-only "Playback quality" button on the dashboard).
+3. Reload the web client. Open the browser console: lines starting with
+   [AdaptiveQuality] show what is measured.
+
+Any other way of injecting a script into jellyfin-web works too.
+
+LANGUAGE
+--------
+Messages are English by default. For Dutch, put this in its own injected script that runs
+before the two scripts above:
+
+    window.__adaptiveQualityLang = 'nl';
+
+TESTS
+-----
+    npm test        (Node 18+, no dependencies)
+
+This is the single source for the two scripts. Other projects that deploy them copy
+src/ from here instead of keeping their own diverging version.

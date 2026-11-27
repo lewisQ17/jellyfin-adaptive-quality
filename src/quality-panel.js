@@ -24,6 +24,36 @@
     InterlacedVideoNotSupported:  'interlaced video not supported'
   };
 
+  // Language: English by default. Set `window.__adaptiveQualityLang = 'nl'` (before this script
+  // loads) for Dutch. Unknown values fall back to English.
+  var LANG = (window.__adaptiveQualityLang === 'nl') ? 'nl' : 'en';
+  var REASON_NL = {
+    ContainerNotSupported:        'speler kent dit bestandsformaat niet',
+    VideoCodecNotSupported:       'speler kent deze videocodec niet',
+    AudioCodecNotSupported:       'speler kent deze geluidscodec niet',
+    ContainerBitrateExceedsLimit: 'bestand zwaarder dan de ingestelde limiet',
+    VideoResolutionNotSupported:  'resolutie te hoog voor de speler',
+    VideoBitDepthNotSupported:    'speler kan geen 10-bits kleur',
+    VideoRangeTypeNotSupported:   'speler kan dit HDR-type niet (bv. Dolby Vision)',
+    SubtitleCodecNotSupported:    'ondertitelformaat moet ingebrand worden'
+  };
+  var UI = {
+    en: { title: 'Playback quality', active: 'active', refresh: 'refreshes every 5 s',
+          nobody: 'Nobody is watching right now.', user: 'User', device: 'Device', method: 'Method',
+          fromTo: 'From → to', why: 'Why', unchanged: '(unchanged)', unknown: 'unknown',
+          direct: 'direct', transcoded: 'transcoded', recent: 'Recent automatic adjustments',
+          deviceN: 'device', on: 'on', loadFail: 'Could not load data: ', loading: 'loading…',
+          button: '📊 Playback quality' },
+    nl: { title: 'Afspeelkwaliteit', active: 'actief', refresh: 'ververst elke 5 s',
+          nobody: 'Er kijkt op dit moment niemand.', user: 'Wie', device: 'Apparaat', method: 'Methode',
+          fromTo: 'Van → naar', why: 'Waarom', unchanged: '(ongewijzigd)', unknown: 'onbekend',
+          direct: 'rechtstreeks', transcoded: 'omgezet', recent: 'Laatste automatische aanpassingen',
+          deviceN: 'apparaat', on: 'op', loadFail: 'Kon gegevens niet laden: ', loading: 'laden…',
+          button: '📊 Afspeelkwaliteit' }
+  };
+  function t(k) { return UI[LANG][k]; }
+  if (LANG === 'nl') Object.keys(REASON_NL).forEach(function (k) { REASON_TEXT[k] = REASON_NL[k]; });
+
   function api(path) {
     var a = window.ApiClient;
     if (!a || !a.accessToken) return Promise.reject(new Error('no ApiClient'));
@@ -86,18 +116,18 @@
     sessions.forEach(function (s) { if (s.DeviceId) nameOf[s.DeviceId] = s.DeviceName || ''; });
 
     var playing = sessions.filter(function (s) { return s.NowPlayingItem; });
-    var html = '<h2 style="margin:0 0 4px;font-size:19px">Playback quality</h2>' +
+    var html = '<h2 style="margin:0 0 4px;font-size:19px">' + t('title') + '</h2>' +
       '<div style="opacity:.65;font-size:12px;margin-bottom:14px">' +
-      playing.length + ' active · refreshes every 5 s</div>';
+      playing.length + ' ' + t('active') + ' · ' + t('refresh') + '</div>';
 
     if (!playing.length) {
-      html += '<div style="opacity:.6;padding:16px 0">Nobody is watching right now.</div>';
+      html += '<div style="opacity:.6;padding:16px 0">' + t('nobody') + '</div>';
     } else {
       html += '<table style="width:100%;border-collapse:collapse;font-size:13px">' +
         '<thead><tr style="text-align:left;opacity:.6">' +
-        '<th style="padding:6px 8px">User</th><th style="padding:6px 8px">Device</th>' +
-        '<th style="padding:6px 8px">Method</th><th style="padding:6px 8px">From → to</th>' +
-        '<th style="padding:6px 8px">Why</th></tr></thead><tbody>';
+        '<th style="padding:6px 8px">' + t('user') + '</th><th style="padding:6px 8px">' + t('device') + '</th>' +
+        '<th style="padding:6px 8px">' + t('method') + '</th><th style="padding:6px 8px">' + t('fromTo') + '</th>' +
+        '<th style="padding:6px 8px">' + t('why') + '</th></tr></thead><tbody>';
 
       playing.forEach(function (s) {
         var ni = s.NowPlayingItem || {}, ti = s.TranscodingInfo, ps = s.PlayState || {};
@@ -106,22 +136,22 @@
         var from = res(vs.Width, vs.Height) + ' ' + esc((vs.Codec || '').toUpperCase()) +
                    (vs.VideoRangeType && vs.VideoRangeType !== 'SDR' ? ' ' + esc(vs.VideoRangeType) : '');
         var to = ti ? (res(ti.Width, ti.Height) + ' ' + esc((ti.VideoCodec || '').toUpperCase()) +
-                       ' @ ' + mb(ti.Bitrate)) : '(unchanged)';
+                       ' @ ' + mb(ti.Bitrate)) : t('unchanged');
         var mine = byDevice[s.DeviceId];
         var why = direct ? '' : reasonsText(ti && ti.TranscodeReasons);
         if (mine && mine.reason) {
           why = (mine.verdict === 'netwerk' ? '📶 ' : '🖥️ ') + esc(mine.reason) +
                 (why ? ' <span style="opacity:.55">(' + why + ')</span>' : '');
         } else if (!why && !direct) {
-          why = 'unknown';
+          why = t('unknown');
         }
         html += '<tr style="border-top:1px solid rgba(255,255,255,.09)">' +
           '<td style="padding:7px 8px">' + esc(s.UserName || '?') + '</td>' +
           '<td style="padding:7px 8px">' + esc(s.DeviceName || '?') +
             '<div style="opacity:.5;font-size:11px">' + esc(s.Client || '') + '</div></td>' +
           '<td style="padding:7px 8px">' + (direct
-              ? '<span style="color:#5fd97a">direct</span>'
-              : '<span style="color:#ffb648">transcoded</span>') + '</td>' +
+              ? '<span style="color:#5fd97a">' + t('direct') + '</span>'
+              : '<span style="color:#ffb648">' + t('transcoded') + '</span>') + '</td>' +
           '<td style="padding:7px 8px">' + from +
             (direct ? '' : '<div style="opacity:.7">→ ' + to + '</div>') + '</td>' +
           '<td style="padding:7px 8px">' + (why || '—') + '</td></tr>';
@@ -130,15 +160,15 @@
     }
 
     if (verdicts.length) {
-      html += '<h3 style="margin:20px 0 6px;font-size:14px;opacity:.8">Recent automatic adjustments</h3>' +
+      html += '<h3 style="margin:20px 0 6px;font-size:14px;opacity:.8">' + t('recent') + '</h3>' +
         '<div style="font-size:12px;opacity:.75">';
       verdicts.sort(function (a, b) { return (b.ts || '').localeCompare(a.ts || ''); })
         .slice(0, 8).forEach(function (v) {
           var icon = v.verdict === 'network' ? '📶' : (v.verdict === 'recovery' ? '⬆️' : '🖥️');
           // The same account can appear more than once here, one line per device.
-          var dev = nameOf[v.deviceId] || ('device ' + String(v.deviceId).slice(0, 6));
+          var dev = nameOf[v.deviceId] || (t('deviceN') + ' ' + String(v.deviceId).slice(0, 6));
           html += '<div style="padding:3px 0">' + icon + ' <b>' + esc(v.name) + '</b>' +
-            ' <span style="opacity:.7">on ' + esc(dev) + '</span> — ' +
+            ' <span style="opacity:.7">' + t('on') + ' ' + esc(dev) + '</span> — ' +
             esc(v.reason || '') +
             (v.level ? ' <span style="opacity:.8">[' + esc(v.level) + ']</span>' : '') +
             ' <span style="opacity:.55">(' +
@@ -159,7 +189,7 @@
       })
       .catch(function (e) {
         var body = overlay && overlay.querySelector('.qg-body');
-        if (body) body.innerHTML = '<div style="opacity:.7">Could not load data: ' + esc(e.message) + '</div>';
+        if (body) body.innerHTML = '<div style="opacity:.7">' + t('loadFail') + esc(e.message) + '</div>';
       });
   }
 
@@ -172,7 +202,7 @@
       '<div style="max-width:1000px;margin:0 auto;background:#1b1b1f;color:#eee;border-radius:12px;' +
       'padding:22px 24px;box-shadow:0 12px 60px rgba(0,0,0,.6)">' +
       '<button class="qg-close" style="float:right;background:none;border:0;color:#aaa;font-size:24px;' +
-      'cursor:pointer;line-height:1">×</button><div class="qg-body">loading…</div></div>';
+      'cursor:pointer;line-height:1">×</button><div class="qg-body">' + t('loading') + '</div></div>';
     document.body.appendChild(overlay);
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay || e.target.classList.contains('qg-close')) close();
@@ -194,7 +224,7 @@
     if (btn) return;
     btn = document.createElement('button');
     btn.id = 'qg-btn';
-    btn.textContent = '📊 Playback quality';
+    btn.textContent = t('button');
     btn.style.cssText = 'position:fixed;right:18px;bottom:18px;z-index:2147482000;' +
       'background:#6f5cff;color:#fff;border:0;border-radius:22px;padding:11px 18px;' +
       'font:14px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45)';

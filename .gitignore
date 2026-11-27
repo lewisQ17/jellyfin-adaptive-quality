@@ -1,2 +1,14 @@
 node_modules/
 *.log
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+geheimen*.json
+*.bak
+*.bak*
+._*
+.DS_Store
+.claude/worktrees/
+venv/

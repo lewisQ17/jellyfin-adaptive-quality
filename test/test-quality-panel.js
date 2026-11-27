@@ -26,6 +26,9 @@ function mkEl() {
 }
 
 global.window = global;
+// AQ_LANG=nl draait dezelfde test met de Nederlandse teksten.
+const NL = process.env.AQ_LANG === 'nl';
+if (NL) global.__adaptiveQualityLang = 'nl';
 global.location = { hash: '#/dashboard' };
 global.navigator = { userAgent: 'node' };
 global.document = {
@@ -86,15 +89,15 @@ check('script loads without error', !crashed);
     const body = withHtml.map(e => e._html).join('\n');
     check('panel renders content', body.length > 50, body.length + ' tekens');
     check('shows the viewer', /amber/.test(body));
-    check('shows "transcoded"', /transcoded/.test(body));
+    check('shows the transcoded label', (NL ? /omgezet/ : /transcoded/).test(body));
     check('translates the reason into plain language', /Dolby Vision/.test(body),
-          (body.match(/player cannot handle this HDR type[^<]*/) || [''])[0]);
+          (body.match(/(player cannot handle|speler kan dit) HDR[^<]*/) || [''])[0]);
     check('shows from -> to', /3240×2160/.test(body) && /2560×1440/.test(body));
     check('ESCAPES a hostile device name (no <img> in the output)',
           !/<img/.test(body) && /&lt;img/.test(body));
     check('BOTH devices of the same account appear',
           /laptop could not keep up/.test(body) && /phone had slow wifi/.test(body));
-    check('device name or id is shown', /on /.test(body));
+    check('device name or id is shown', (NL ? /op / : /on /).test(body));
 
   }
 

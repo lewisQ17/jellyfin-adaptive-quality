@@ -55,7 +55,7 @@
   /*
    * Quality ladder. Each step gives up as little as possible.
    * Verified against Jellyfin 10.11.11 with a 3240x2160 HEVC Main10 Dolby Vision P8.1
-   * source of those characteristics; the comment shows what the server actually produced.
+   * source; the comment shows what the server actually produced (ffprobe on real segments).
    */
   var LEVELS = [
     { label: 'original',      c: {} },
@@ -67,10 +67,22 @@
   ];
   var COLOUR_ONLY_MAX = 2;   // above this we constrain resolution, which is content-specific
 
-  var MSG = {
-    device:  function (lvl) { return 'Quality adjusted to ' + lvl + ' — this device could not play the original smoothly.'; },
-    network: function ()    { return 'Quality temporarily reduced — your connection is too slow.'; }
+  // Language: English by default. Set `window.__adaptiveQualityLang = 'nl'` (before this script
+  // loads) for Dutch. Unknown values fall back to English.
+  var LANG = (window.__adaptiveQualityLang === 'nl') ? 'nl' : 'en';
+  var MSGS = {
+    en: {
+      device:   function (lvl) { return 'Quality adjusted to ' + lvl + ' — this device could not play the original smoothly.'; },
+      network:  function ()    { return 'Quality temporarily reduced — your connection is too slow.'; },
+      recovery: 'Background check passed - quality goes up on the next title.'
+    },
+    nl: {
+      device:   function (lvl) { return 'Beeld aangepast naar ' + lvl + ' — dit apparaat kon het origineel niet vlot afspelen.'; },
+      network:  function ()    { return 'Kwaliteit tijdelijk verlaagd — je verbinding is te traag.'; },
+      recovery: 'Achtergrondtest geslaagd - kwaliteit gaat omhoog bij de volgende titel.'
+    }
   };
+  var MSG = MSGS[LANG];
 
   var qLevel = 0;                 // device/quality axis
   var nLevel = 0;                 // network axis
@@ -390,7 +402,7 @@
         qLevel = target;
         log('probe passed (' + r.why + ') - level raised to "' + LEVELS[qLevel].label +
             '"; applies at the next negotiation, playback is not interrupted');
-        reportVerdict('recovery', 'Background check passed - quality goes up on the next title.');
+        reportVerdict('recovery', MSG.recovery);
       } else {
         log('probe did not pass (' + r.why + ') - staying at "' + LEVELS[qLevel].label + '"');
       }
